@@ -14,7 +14,7 @@
  * Row 1: NO,  7, 8, 9
  * Row 2: DOWN, 4, 5, 6
  * Row 3: CENTER, 1, 2, 3
- * Row 4: UP, ESC, HOME, TAB
+ * Row 4: UP, ESC, HOME, MAIL
  */
 class TEchoLiteKeyboard : public TCA8418KeyboardBase
 {
@@ -94,5 +94,5 @@ class TEchoLiteKeyboard : public TCA8418KeyboardBase
     // Notification modes: 0=OFF, 1=VIB ONLY, 2=LIGHT ONLY, 3=VIB+LIGHT
     uint8_t notif_mode = 3;  // default: VIB+LIGHT
     
-    bool key_vibrate_enabled = true;      // key press vibration (TAB triple-tap to toggle)
+    bool key_vibrate_enabled = true;      // key press vibration (MAIL triple-tap to toggle)
 };

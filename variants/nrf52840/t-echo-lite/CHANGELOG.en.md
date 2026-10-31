@@ -4,7 +4,7 @@
 
 ### New Features
 - **4-Mode Notification System** — ESC triple-tap to cycle: OFF / VIB ONLY / LIGHT ONLY / VIB+LIGHT
-- **Key Vibration** — TAB triple-tap to toggle key vibration
+- **Key Vibration** — MAIL triple-tap to toggle key vibration
 - **Backlight Brightness Cycling** — HOME triple-tap: OFF → 30% → 65% → 100% → OFF
 - **Backlight Auto-Off** — Automatically turns off after 30 seconds of no keypress
 - **Message Notification Integration** — Triggers vibration + backlight flash on message receipt
@@ -29,7 +29,7 @@
 - **Mode 3**: VIB + LIGHT (double-pulse vibration + 3 backlight flashes) **Default**
 
 ### Key Mapping
-- **TAB (Key 3)**: Single=RIGHT, Double=BSP, Triple=Key Vibration Toggle
+- **MAIL (Key 3)**: Single=RIGHT, Double=BSP, Triple=Key Vibration Toggle
 - **ESC (Key 1)**: Single=ESC, Double=ESC, Triple=Notification Mode Cycle
 - **SHIFT (Key 19)**: Single=#, Double=SHIFT Toggle
 - **Other Function Keys**: Triple=Backlight Toggle

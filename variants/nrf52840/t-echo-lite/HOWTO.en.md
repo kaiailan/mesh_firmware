@@ -73,7 +73,7 @@ T-Echo Lite uses a 5-row × 4-column matrix keyboard layout (20 physical keys):
 
 ```
 ┌─────────┬─────────┬─────────┬─────────┐
-│   UP    │   ESC   │  HOME   │   TAB   │  Row 0
+│   UP    │   ESC   │  HOME   │  MAIL   │  Row 0
 ├─────────┼─────────┼─────────┼─────────┤
 │  CENTER │   '1'   │   '2'   │   '3'   │  Row 1
 ├─────────┼─────────┼─────────┼─────────┤
@@ -92,7 +92,7 @@ T-Echo Lite uses a 5-row × 4-column matrix keyboard layout (20 physical keys):
 | **UP** | (0,0) | UP | UP | Backlight Toggle |
 | **ESC** | (0,1) | ESC | ESC | Notification Mode Cycle |
 | **HOME** | (0,2) | LEFT | BSP | Backlight Toggle |
-| **TAB** | (0,3) | RIGHT | BSP | Key Vibration Toggle |
+| **MAIL** | (0,3) | RIGHT | BSP | Key Vibration Toggle |
 | **CENTER** | (1,0) | SELECT | TAB | Backlight Toggle |
 | **DOWN** | (2,0) | DOWN | DOWN | Backlight Toggle |
 | **NO** | (3,0) | ESC | ESC | Backlight Toggle |
@@ -126,7 +126,7 @@ T-Echo Lite uses a 5-row × 4-column matrix keyboard layout (20 physical keys):
 - **SHIFT Key (#)**: Double-tap toggles SHIFT state (uppercase/special characters), single-tap outputs `#` character
 - **Notification Mode Cycle (ESC Triple-Tap)**: 3 → 0 → 1 → 2 → 3 (VIB+LIGHT → OFF → VIB ONLY → LIGHT ONLY → VIB+LIGHT)
 - **Backlight Toggle**: UP/HOME/CENTER/DOWN/NO/YES triple-tap toggles backlight
-- **Key Vibration Toggle (TAB Triple-Tap)**: Toggles key vibration feedback
+- **Key Vibration Toggle (MAIL Triple-Tap)**: Toggles key vibration feedback
 
 ---
 
@@ -180,7 +180,7 @@ Notification mode: LIGHT ONLY -> VIB + LIGHT (mode=2 -> 3)
 
 ### Key Vibration
 
-- **Trigger**: TAB triple-tap toggle
+- **Trigger**: MAIL triple-tap toggle
 - **Check**: `key_vibrate_enabled`
 - **Purpose**: Key feedback
 
@@ -231,7 +231,7 @@ if (doVib && doLight) {
 ### Kept Logs
 
 - Chip initialization (AW21009, AW86224)
-- Key vibration toggle (TAB triple-tap)
+- Key vibration toggle (MAIL triple-tap)
 - Notification mode switch (ESC triple-tap)
 
 ### Removed Logs

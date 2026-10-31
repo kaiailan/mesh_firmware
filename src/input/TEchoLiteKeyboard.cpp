@@ -16,12 +16,12 @@ using Key = TCA8418KeyboardBase::TCA8418Key;
 // Row 1: NO,  7, 8, 9
 // Row 2: DOWN, 4, 5, 6
 // Row 3: CENTER, 1, 2, 3
-// Row 4: UP, ESC, HOME, TAB
+// Row 4: UP, ESC, HOME, MAIL
 
 // Modifier keys
 constexpr uint8_t modifierRightShiftKey = 18; // HOME key
 constexpr uint8_t modifierRightShift = 0b0001;
-constexpr uint8_t modifierSymKey = 19;        // TAB key
+constexpr uint8_t modifierSymKey = 19;        // MAIL key
 constexpr uint8_t modifierSym = 0b0010;
 
 // Key tap map: [key][modifier_flag % 3]
@@ -32,7 +32,7 @@ static unsigned char TEchoLiteTapMap[_TECHO_LITE_NUM_KEYS][3] = {
     {Key::UP, Key::UP, Key::BL_TOGGLE},             // key 0: UP (single=UP, double=UP, triple=backlight)
     {Key::ESC, Key::ESC, Key::NOTIF_VIB_TOGGLE},           // key 1: ESC (triple=notification vibration toggle)
     {Key::LEFT, Key::BSP, Key::BL_TOGGLE},          // key 2: HOME (single=LEFT, double=BSP, triple=backlight)
-    {Key::RIGHT, Key::BSP, Key::MUTE_TOGGLE},       // key 3: TAB (single=RIGHT, double=BSP, triple=vibration)
+    {Key::RIGHT, Key::BSP, Key::MUTE_TOGGLE},       // key 3: MAIL (single=RIGHT, double=BSP, triple=vibration)
     {Key::SELECT, Key::TAB, Key::BL_TOGGLE},        // key 4: CENTER (single=SELECT, double=TAB, triple=backlight)
     {0x00, 0x00, 0x00},                             // key 5: '1' (multi-tap: . , 1)
     {0x00, 0x00, 0x00},                             // key 6: '2' (multi-tap: a b c 2 @)
@@ -271,7 +271,7 @@ static uint8_t keyMap[46] = {
     0, 0, 0, 0, 0,       // IDs 25-29: unused
     0, 4, 5, 6, 7,       // IDs 30-34: unused, CENTER, 1, 2, 3
     0, 0, 0, 0, 0,       // IDs 35-39: unused
-    0, 0, 1, 2, 3,       // IDs 40-44: unused, UP, ESC, HOME, TAB
+    0, 0, 1, 2, 3,       // IDs 40-44: unused, UP, ESC, HOME, MAIL
     0                   // ID 45:    unused
 };
 void TEchoLiteKeyboard::pressed(uint8_t key)
