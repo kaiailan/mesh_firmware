@@ -67,20 +67,66 @@ sshpass -p '[.passwords]' scp -o StrictHostKeyChecking=no \
 
 ## Key Mapping
 
-### Multi-Tap Table
+### Keyboard Layout
 
-| Key | Single | Double | Triple |
-|-----|--------|--------|--------|
-| **TAB (Key 3)** | RIGHT | BSP | Key Vibration Toggle |
-| **ESC (Key 1)** | ESC | ESC | Notification Mode Cycle |
-| **SHIFT (Key 19)** | # | SHIFT Toggle | — |
-| **Other Function Keys** | — | — | Backlight Toggle |
+T-Echo Lite uses a 5-row × 4-column matrix keyboard layout (20 physical keys):
+
+```
+┌─────────┬─────────┬─────────┬─────────┐
+│   UP    │   ESC   │  HOME   │   TAB   │  Row 0
+├─────────┼─────────┼─────────┼─────────┤
+│  CENTER │   '1'   │   '2'   │   '3'   │  Row 1
+├─────────┼─────────┼─────────┼─────────┤
+│   DOWN  │   '4'   │   '5'   │   '6'   │  Row 2
+├─────────┼─────────┼─────────┼─────────┤
+│   NO    │   '7'   │   '8'   │   '9'   │  Row 3
+├─────────┼─────────┼─────────┼─────────┤
+│   YES   │   '*'   │   '0'   │   '#'   │  Row 4
+└─────────┴─────────┴─────────┴─────────┘
+```
+
+### Function Key Mapping
+
+| Key | Position | Single | Double | Triple |
+|-----|----------|--------|--------|--------|
+| **UP** | (0,0) | UP | UP | Backlight Toggle |
+| **ESC** | (0,1) | ESC | ESC | Notification Mode Cycle |
+| **HOME** | (0,2) | LEFT | BSP | Backlight Toggle |
+| **TAB** | (0,3) | RIGHT | BSP | Key Vibration Toggle |
+| **CENTER** | (1,0) | SELECT | TAB | Backlight Toggle |
+| **DOWN** | (2,0) | DOWN | DOWN | Backlight Toggle |
+| **NO** | (3,0) | ESC | ESC | Backlight Toggle |
+| **YES** | (4,0) | SELECT | TAB | Backlight Toggle |
+
+### Number/Symbol Key Mapping (Multi-Tap Cycle)
+
+| Key | Position | Tap 1 | Tap 2 | Tap 3 | Tap 4 | Tap 5 |
+|-----|----------|-------|-------|-------|-------|-------|
+| **'1'** | (1,1) | . | , | 1 | | |
+| **'2'** | (1,2) | a | b | c | 2 | @ |
+| **'3'** | (1,3) | d | e | f | 3 | |
+| **'4'** | (2,1) | g | h | i | 4 | |
+| **'5'** | (2,2) | j | k | l | 5 | |
+| **'6'** | (2,3) | m | n | o | 6 | |
+| **'7'** | (3,1) | p | q | r | 7 | s |
+| **'8'** | (3,2) | t | u | v | 8 | |
+| **'9'** | (3,3) | w | x | y | 9 | z |
+| **'*'** | (4,1) | * | BSP | ENTER | | |
+| **'0'** | (4,2) | SPACE | 0 | | | |
+| **'#'** | (4,3) | # | SHIFT Toggle | | | |
 
 ### Multi-Tap Rules
 
 - **Threshold**: 400ms (most keys), `*` key 1200ms (TCA8418 latency)
 - **Logic**: `tapIndex = (tap_count - 1) % TEchoLiteTapMod[key]`
 - **Important**: `TEchoLiteTapMod[key]` must be >= max consecutive taps for that key
+
+### Special Keys
+
+- **SHIFT Key (#)**: Double-tap toggles SHIFT state (uppercase/special characters), single-tap outputs `#` character
+- **Notification Mode Cycle (ESC Triple-Tap)**: 3 → 0 → 1 → 2 → 3 (VIB+LIGHT → OFF → VIB ONLY → LIGHT ONLY → VIB+LIGHT)
+- **Backlight Toggle**: UP/HOME/CENTER/DOWN/NO/YES triple-tap toggles backlight
+- **Key Vibration Toggle (TAB Triple-Tap)**: Toggles key vibration feedback
 
 ---
 
