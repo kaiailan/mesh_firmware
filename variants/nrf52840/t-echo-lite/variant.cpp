@@ -41,4 +41,9 @@ void initVariant()
 
     pinMode(PIN_LED3, OUTPUT);
     ledOff(PIN_LED3);
+
+    // 3V3 rail (PIN_POWER_EN) is already powered on by main.cpp setup().
+    // GPS-specific LDO (PIN_GPS_EN) is handled by GPS::createGps().
+    // STANDBY pin: L76K defaults to awake on power-up, so no need to
+    // pre-toggle it here (matches 2.6.13 behavior which works).
 }

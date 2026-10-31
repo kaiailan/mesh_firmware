@@ -182,6 +182,26 @@ int32_t StatusLEDModule::runOnce()
     }
 #endif
 
+// BLE_LED heartbeat: blink when Bluetooth is connected (or pairing), off otherwise.
+// Controlled by the same led_heartbeat_disabled config as the charge LED.
+// Uses the same 1ms/999ms timing as the charge LED heartbeat (1 Hz).
+#ifdef BLE_LED
+    bool ble_active = (ble_state == connected || ble_state == pairing);
+    if (!ble_active || config.device.led_heartbeat_disabled) {
+        BLE_LED_state = LED_STATE_OFF;
+    } else {
+        // Toggle in sync with the charge LED heartbeat cycle
+        if (CHARGE_LED_state == LED_STATE_ON) {
+            BLE_LED_state = LED_STATE_ON;
+            my_interval = 1;
+        } else {
+            BLE_LED_state = LED_STATE_OFF;
+            if (my_interval < 500)
+                my_interval = 500;
+        }
+    }
+#endif
+
     // Override if disabled in config
     if (config.device.led_heartbeat_disabled) {
         CHARGE_LED_state = LED_STATE_OFF;
@@ -237,6 +257,9 @@ int32_t StatusLEDModule::runOnce()
 
 #ifdef LED_PAIRING
     digitalWrite(LED_PAIRING, PAIRING_LED_state);
+#endif
+#ifdef BLE_LED
+    digitalWrite(BLE_LED, BLE_LED_state);
 #endif
 #ifdef NEOPIXEL_STATUS_POWER_PIN
     writeStatusPixel(powerPixel, NEOPIXEL_STATUS_POWER_COLOR, CHARGE_LED_state == LED_STATE_ON);

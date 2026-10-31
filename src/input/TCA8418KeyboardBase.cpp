@@ -39,10 +39,13 @@ TCA8418KeyboardBase::TCA8418KeyboardBase(uint8_t rows, uint8_t columns)
 
 void TCA8418KeyboardBase::begin(uint8_t addr, TwoWire *wire)
 {
+    LOG_DEBUG("TCA8418 begin() called with addr=0x%02x", addr);
     m_addr = addr;
     m_wire = wire;
     m_wire->begin();
+    LOG_DEBUG("TCA8418 calling reset()");
     reset();
+    LOG_DEBUG("TCA8418 reset() completed");
 }
 
 void TCA8418KeyboardBase::begin(i2c_com_fptr_t r, i2c_com_fptr_t w, uint8_t addr)
@@ -56,6 +59,7 @@ void TCA8418KeyboardBase::begin(i2c_com_fptr_t r, i2c_com_fptr_t w, uint8_t addr
 
 void TCA8418KeyboardBase::reset()
 {
+    LOG_DEBUG("TCA8418 reset() function entered");
     LOG_DEBUG("TCA8418 Reset");
     //  GPIO
     //  set default all GIO pins to INPUT
@@ -87,6 +91,7 @@ void TCA8418KeyboardBase::reset()
 
 bool TCA8418KeyboardBase::matrix(uint8_t rows, uint8_t columns)
 {
+    LOG_DEBUG("TCA8418 matrix() called with rows=%d, columns=%d", rows, columns);
     if (rows < 1 || rows > 8 || columns < 1 || columns > 10)
         return false;
 
@@ -112,6 +117,11 @@ bool TCA8418KeyboardBase::matrix(uint8_t rows, uint8_t columns)
             mask = 0x03;
         writeRegister(TCA8418_REG_KP_GPIO_3, mask);
     }
+
+    // Enable keyboard scanning mode (CFG register)
+    // 0x80 = enable keypad scanner
+    writeRegister(TCA8418_REG_CFG, 0x80);
+    LOG_DEBUG("TCA8418 CFG set to 0x80 (enable keypad scanner)");
 
     return true;
 }
@@ -148,13 +158,20 @@ char TCA8418KeyboardBase::dequeueEvent()
 
 void TCA8418KeyboardBase::trigger()
 {
-    if (keyCount() == 0) {
+    uint8_t kc = keyCount();
+
+    if (kc == 0) {
         return;
     }
+    
+    LOG_INFO("[TCA8418] Key event detected! keyCount=%d", kc);
+    
     if (state != Init) {
         // Read the key register
         uint8_t k = readRegister(TCA8418_REG_KEY_EVENT_A);
         uint8_t key = k & 0x7F;
+        LOG_INFO("[TCA8418] Key register: 0x%02X (key=%d, isPress=%d)", k, key, (k & 0x80));
+        
         if (k & 0x80) {
             if (state == Idle)
                 pressed(key);

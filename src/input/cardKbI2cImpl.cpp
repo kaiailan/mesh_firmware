@@ -2,13 +2,19 @@
 #include "InputBroker.h"
 #include "detect/ScanI2CTwoWire.h"
 #include "main.h"
+#include <Arduino.h>
 
 CardKbI2cImpl *cardKbI2cImpl;
 
-CardKbI2cImpl::CardKbI2cImpl() : KbI2cBase("cardKB") {}
+CardKbI2cImpl::CardKbI2cImpl() : KbI2cBase("cardKB") {
+    // Debug: print to serial
+    Serial.println("[CardKbI2cImpl] Constructor called");
+}
 
 void CardKbI2cImpl::init()
 {
+    // Debug: print to serial
+    Serial.println("[CardKbI2cImpl] init() called");
 #if !MESHTASTIC_EXCLUDE_I2C && !defined(ARCH_PORTDUINO) && !defined(I2C_NO_RESCAN)
     if (cardkb_found.address == 0x00) {
         LOG_DEBUG("Rescan for I2C keyboard");
@@ -62,18 +68,23 @@ void CardKbI2cImpl::init()
             }
         }
         if (cardkb_found.address == 0x00) {
+            Serial.println("[CardKbI2cImpl] No keyboard found, disabling");
             disable();
             return;
         } else {
             LOG_DEBUG("Keyboard Type: 0x%02x Model: 0x%02x Address: 0x%02x", kb_info.type, kb_model, cardkb_found.address);
+            Serial.printf("[CardKbI2cImpl] Keyboard found: type=%d model=0x%02x addr=0x%02x\n", kb_info.type, kb_model, cardkb_found.address);
         }
     }
 #else
     if (cardkb_found.address == 0x00) {
+        Serial.println("[CardKbI2cImpl] cardkb_found.address == 0x00, disabling");
         disable();
         return;
     }
 #endif
     inputBroker->registerSource(this);
     kb_found = true;
+    Serial.println("[CardKbI2cImpl] init() complete");
 }
+

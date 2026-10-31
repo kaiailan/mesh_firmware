@@ -76,6 +76,9 @@ class StatusLEDModule : private concurrency::OSThread
   private:
     bool CHARGE_LED_state = LED_STATE_OFF;
     bool PAIRING_LED_state = LED_STATE_OFF;
+#ifdef BLE_LED
+    bool BLE_LED_state = LED_STATE_OFF;
+#endif
 #if defined(LED_HEARTBEAT)
     bool HEARTBEAT_LED_state = LED_STATE_OFF;
 #endif

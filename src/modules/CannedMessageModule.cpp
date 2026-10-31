@@ -1383,16 +1383,11 @@ int32_t CannedMessageModule::runOnce()
             switch (this->payload) {
             case 0x08: // backspace
                 if (this->freetext.length() > 0) {
-                    if (this->cursor > 0) {
-                        if (this->cursor == this->freetext.length()) {
-                            this->freetext = this->freetext.substring(0, this->freetext.length() - 1);
-                        } else {
-                            this->freetext = this->freetext.substring(0, this->cursor - 1) +
-                                             this->freetext.substring(this->cursor, this->freetext.length());
-                        }
-                        this->cursor--;
-                    }
-                } else {
+                    this->cursor--;
+                    this->freetext.remove(this->cursor, 1);
+                    // Synchronous UI redraw + e-paper refresh (no 1s scheduler delay)
+                    screen->forceDisplay(true);
+                    LOG_INFO("[cardKB] backspace: len=%u cursor=%u", (unsigned)this->freetext.length(), (unsigned)this->cursor);
                 }
                 break;
             case INPUT_BROKER_MSG_TAB: // Tab key: handled by input handler
@@ -1416,6 +1411,9 @@ int32_t CannedMessageModule::runOnce()
                         this->cursor = maxChars;
                         this->freetext = this->freetext.substring(0, maxChars);
                     }
+                    // Synchronous UI redraw + e-paper refresh for every typed char
+                    if (screen)
+                        screen->forceDisplay(true);
                 }
                 break;
             }

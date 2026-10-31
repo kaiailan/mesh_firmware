@@ -133,10 +133,15 @@ void setupModules()
 {
 #if (HAS_BUTTON || ARCH_PORTDUINO) && !MESHTASTIC_EXCLUDE_INPUTBROKER
     if (config.display.displaymode != meshtastic_Config_DisplayConfig_DisplayMode_COLOR) {
+        Serial.println("[Modules] Creating inputBroker");
         inputBroker = new InputBroker();
         systemCommandsModule = new SystemCommandsModule();
         buzzerFeedbackThread = new BuzzerFeedbackThread();
+    } else {
+        Serial.println("[Modules] displaymode is COLOR, skipping inputBroker");
     }
+#else
+    Serial.println("[Modules] HAS_BUTTON not defined or MESHTASTIC_EXCLUDE_INPUTBROKER, skipping inputBroker");
 #endif
     statusLEDModule = new StatusLEDModule();
 #if !MESHTASTIC_EXCLUDE_REPLYBOT

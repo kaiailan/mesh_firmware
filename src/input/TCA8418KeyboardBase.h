@@ -25,6 +25,7 @@ class TCA8418KeyboardBase
         BT_TOGGLE = 0xAA,
         GPS_TOGGLE = 0x9E,
         MUTE_TOGGLE = 0xAC,
+        NOTIF_VIB_TOGGLE = 0xAD,  // notification vibration toggle
         SEND_PING = 0xAF,
         BL_TOGGLE = 0xAB,
         FUNCTION_F1 = 0xF1,

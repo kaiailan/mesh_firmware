@@ -2030,6 +2030,15 @@ GnssModel_t GPS::probe(int serialSpeed)
                 LOG_INFO(DETECTED_MESSAGE, "U-blox 9", "9");
                 return GNSS_MODEL_UBLOX9;
             } else if (strncmp(ublox_info.hwVersion, "000A0000", 8) == 0) {
+                // L76K has UBX-compatible firmware and responds to UBX-MON-VER with
+                // hwVersion 000A0000 (same as U-blox M10). Cross-check with $PCAS06,0
+                // to distinguish: L76K answers $GPTXT,01,01,02,SW=; a real M10 does not.
+                clearBuffer();
+                _serial_gps->write("$PCAS06,0*1B\r\n");
+                if (getACK("$GPTXT,01,01,02,SW=", 500) == GNSS_RESPONSE_OK) {
+                    LOG_INFO(DETECTED_MESSAGE, "L76K (via UBX fallback)");
+                    return GNSS_MODEL_MTK;
+                }
                 LOG_INFO(DETECTED_MESSAGE, "U-blox 10", "10");
                 return GNSS_MODEL_UBLOX10;
             }

@@ -5,6 +5,8 @@
 
 #if defined(T_DECK_PRO)
 #include "TDeckProKeyboard.h"
+#elif defined(T_ECHO_LITE)
+#include "TEchoLiteKeyboard.h"
 #elif defined(T_LORA_PAGER)
 #include "TLoraPagerKeyboard.h"
 #elif defined(M5STACK_CARDPUTER_ADV)
@@ -28,6 +30,8 @@ KbI2cBase::KbI2cBase(const char *name)
     : concurrency::OSThread(name),
 #if defined(T_DECK_PRO)
       TCAKeyboard(new TDeckProKeyboard())
+#elif defined(T_ECHO_LITE)
+      TCAKeyboard(new TEchoLiteKeyboard())
 #elif defined(T_LORA_PAGER)
       TCAKeyboard(new TLoraPagerKeyboard())
 #elif defined(M5STACK_CARDPUTER_ADV)
@@ -276,114 +280,57 @@ int32_t KbI2cBase::runOnce()
         }
         break;
     }
-    case 0x84: { // Adafruit TCA8418
-        TCAKeyboard->trigger();
-        InputEvent e = {};
-        while (TCAKeyboard->hasEvent()) {
-            char nextEvent = TCAKeyboard->dequeueEvent();
-            e.inputEvent = INPUT_BROKER_ANYKEY;
-            e.kbchar = 0x00;
-            e.source = this->_originName;
-            switch (nextEvent) {
-            case TCA8418KeyboardBase::NONE:
+        case 0x84: { // Adafruit TCA8418 (T-Echo Lite KeyShield)
+            TCAKeyboard->trigger();
+            InputEvent e = {};
+            while (TCAKeyboard->hasEvent()) {
+                uint8_t nextEvent = TCAKeyboard->dequeueEvent();
                 e.inputEvent = INPUT_BROKER_NONE;
                 e.kbchar = 0x00;
-                break;
-            case TCA8418KeyboardBase::REBOOT:
-                e.inputEvent = INPUT_BROKER_ANYKEY;
-                e.kbchar = INPUT_BROKER_MSG_REBOOT;
-                break;
-            case TCA8418KeyboardBase::LEFT:
-                e.inputEvent = INPUT_BROKER_LEFT;
-                e.kbchar = 0x00;
-                break;
-            case TCA8418KeyboardBase::UP:
-                e.inputEvent = INPUT_BROKER_UP;
-                e.kbchar = 0x00;
-                break;
-            case TCA8418KeyboardBase::DOWN:
-                e.inputEvent = INPUT_BROKER_DOWN;
-                e.kbchar = 0x00;
-                break;
-            case TCA8418KeyboardBase::RIGHT:
-                e.inputEvent = INPUT_BROKER_RIGHT;
-                e.kbchar = 0x00;
-                break;
-            case TCA8418KeyboardBase::BSP:
-                e.inputEvent = INPUT_BROKER_BACK;
-                e.kbchar = 0x08;
-                break;
-            case TCA8418KeyboardBase::SELECT:
-                e.inputEvent = INPUT_BROKER_SELECT;
-                e.kbchar = 0x00;
-                break;
-            case TCA8418KeyboardBase::ESC:
-                e.inputEvent = INPUT_BROKER_CANCEL;
-                e.kbchar = 0x00;
-                break;
-            case TCA8418KeyboardBase::GPS_TOGGLE:
-                e.inputEvent = INPUT_BROKER_ANYKEY;
-                e.kbchar = INPUT_BROKER_GPS_TOGGLE;
-                break;
-            case TCA8418KeyboardBase::SEND_PING:
-                e.inputEvent = INPUT_BROKER_ANYKEY;
-                e.kbchar = INPUT_BROKER_SEND_PING;
-                break;
-            case TCA8418KeyboardBase::MUTE_TOGGLE:
-                e.inputEvent = INPUT_BROKER_ANYKEY;
-                e.kbchar = INPUT_BROKER_MSG_MUTE_TOGGLE;
-                break;
-            case TCA8418KeyboardBase::BT_TOGGLE:
-                e.inputEvent = INPUT_BROKER_ANYKEY;
-                e.kbchar = INPUT_BROKER_MSG_BLUETOOTH_TOGGLE;
-                break;
-            case TCA8418KeyboardBase::BL_TOGGLE:
-                e.inputEvent = INPUT_BROKER_ANYKEY;
-                e.kbchar = INPUT_BROKER_MSG_BLUETOOTH_TOGGLE;
-                break;
-            case TCA8418KeyboardBase::TAB:
-                e.inputEvent = INPUT_BROKER_ANYKEY;
-                e.kbchar = INPUT_BROKER_MSG_TAB;
-                break;
-            case TCA8418KeyboardBase::FUNCTION_F1:
-                e.inputEvent = INPUT_BROKER_FN_F1;
-                e.kbchar = 0x00;
-                break;
-            case TCA8418KeyboardBase::FUNCTION_F2:
-                e.inputEvent = INPUT_BROKER_FN_F2;
-                e.kbchar = 0x00;
-                break;
-            case TCA8418KeyboardBase::FUNCTION_F3:
-                e.inputEvent = INPUT_BROKER_FN_F3;
-                e.kbchar = 0x00;
-                break;
-            case TCA8418KeyboardBase::FUNCTION_F4:
-                e.inputEvent = INPUT_BROKER_FN_F4;
-                e.kbchar = 0x00;
-                break;
-            case TCA8418KeyboardBase::FUNCTION_F5:
-                e.inputEvent = INPUT_BROKER_FN_F5;
-                e.kbchar = 0x00;
-                break;
-            default:
-                if (nextEvent > 127) {
-                    e.inputEvent = INPUT_BROKER_NONE;
-                    e.kbchar = 0x00;
+                e.source = this->_originName;
+                switch (nextEvent) {
+                case TCA8418KeyboardBase::TCA8418Key::UP:
+                    e.inputEvent = INPUT_BROKER_UP;
+                    break;
+                case TCA8418KeyboardBase::TCA8418Key::DOWN:
+                    e.inputEvent = INPUT_BROKER_DOWN;
+                    break;
+                case TCA8418KeyboardBase::TCA8418Key::LEFT:
+                    e.inputEvent = INPUT_BROKER_LEFT;
+                    break;
+                case TCA8418KeyboardBase::TCA8418Key::RIGHT:
+                    e.inputEvent = INPUT_BROKER_RIGHT;
+                    break;
+                case TCA8418KeyboardBase::TCA8418Key::SELECT:
+                    e.inputEvent = INPUT_BROKER_SELECT;
+                    break;
+                case TCA8418KeyboardBase::TCA8418Key::ESC:
+                    e.inputEvent = INPUT_BROKER_CANCEL;
+                    break;
+                case TCA8418KeyboardBase::TCA8418Key::BSP:
+                    e.inputEvent = INPUT_BROKER_BACK;
+                    break;
+                default:
+                    // All other keys (numbers, letters, function keys, toggles)
+                    if (nextEvent >= '0' && nextEvent <= '9') {
+                        e.kbchar = nextEvent;
+                    } else if (nextEvent >= 'A' && nextEvent <= 'Z') {
+                        e.kbchar = nextEvent;
+                    } else {
+                        e.inputEvent = INPUT_BROKER_ANYKEY;
+                        e.kbchar = nextEvent;
+                    }
                     break;
                 }
-                e.inputEvent = INPUT_BROKER_ANYKEY;
-                e.kbchar = nextEvent;
-                break;
+                if (e.inputEvent != INPUT_BROKER_NONE || e.kbchar != 0) {
+                    this->notifyObservers(&e);
+                }
+                TCAKeyboard->trigger();
             }
-            if (e.inputEvent != INPUT_BROKER_NONE) {
-                // LOG_DEBUG("TCA8418 Notifying: %i Char: %c", e.inputEvent, e.kbchar);
-                this->notifyObservers(&e);
-            }
-            TCAKeyboard->trigger();
+            TCAKeyboard->clearInt();
+            break;
         }
-        TCAKeyboard->clearInt();
-        break;
-    }
+
     case 0x02: {
         // RAK14004
         uint8_t rDataBuf[8] = {0};
@@ -592,7 +539,6 @@ int32_t KbI2cBase::runOnce()
             e.inputEvent = INPUT_BROKER_GPS_TOGGLE;
             Stc8HKeyBoard.switch_flashlight();
             break;
-        case 0x85: // FM
             e.inputEvent = INPUT_BROKER_SEND_PING;
             e.kbchar = 0;
             break;
@@ -653,7 +599,6 @@ int32_t KbI2cBase::runOnce()
             break;
         }
         if (e.inputEvent != INPUT_BROKER_NONE) {
-            // LOG_DEBUG("STC8H companion-MCU keypad key event: 0x%02x", c);
             this->notifyObservers(&e);
         }
 
@@ -662,6 +607,11 @@ int32_t KbI2cBase::runOnce()
 #endif
     default:
         LOG_WARN("Unknown kb_model 0x%02x", kb_model);
+    }
+    // TCA8418 (kb_model 0x84) needs faster polling for haptic sync (~50ms)
+    // Other keyboards use 300ms (original value)
+    if (kb_model == 0x84) {
+        return 50;
     }
     return 300;
 }
@@ -672,3 +622,12 @@ void KbI2cBase::toggleBacklight(bool on)
     TCAKeyboard->setBacklight(on);
 #endif
 }
+
+
+
+
+
+
+
+
+

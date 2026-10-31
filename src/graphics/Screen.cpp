@@ -34,6 +34,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // Provided by each niche-enabled variant's nicheGraphics.h (defined once, in the main.cpp TU).
 extern NicheGraphics::BaseUIEInkDisplay *setupNicheGraphicsBaseUI();
 #endif
+#if defined(MESHTASTIC_INCLUDE_INKHUD)
+// InkHUD removed for T-Echo Lite (size constraint)
+#endif
 #if defined(USE_HUB75)
 #include "graphics/HUB75Display.h" // ESP32 HUB75 (I2S-DMA)
 #endif
@@ -2084,7 +2087,10 @@ void Screen::setFastFramerate()
     targetFramerate = SCREEN_TRANSITION_FRAMERATE;
 
     ui->setTargetFPS(targetFramerate);
-    setInterval(0); // redraw ASAP
+    // setInterval(0) is a no-op here: last_run is already current, so _cached_next_run
+    // stays "now" and the thread is already due. The real issue is that runASAP only
+    // wakes the sleep loop, not the thread scheduler - the thread won't re-run until
+    // its deadline. Rebase the deadline to NOW so it fires on the next loop pass.
     runASAP = true;
 }
 
@@ -2306,6 +2312,11 @@ int Screen::handleInputEvent(const InputEvent *event)
             } else if (event->inputEvent == INPUT_BROKER_RIGHT || event->inputEvent == INPUT_BROKER_USER_PRESS ||
                        (event->inputEvent == INPUT_BROKER_ANYKEY && event->kbchar == ' ')) {
                 showFrame(FrameDirection::NEXT);
+            } else if (event->inputEvent == INPUT_BROKER_ANYKEY) {
+                // T-Echo Lite keyboard: only space triggers "next frame", other keys pass through
+                if (event->kbchar == ' ') {
+                    showFrame(FrameDirection::NEXT);
+                }
             } else if (event->inputEvent == INPUT_BROKER_FN_F1) {
                 this->ui->switchToFrame(0);
 #ifdef USERPREFS_UI_TEST_LOG

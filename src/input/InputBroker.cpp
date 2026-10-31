@@ -172,7 +172,7 @@ void InputBroker::pollSoonWorker(void *p)
 
 void InputBroker::Init()
 {
-
+    Serial.println("[InputBroker] Init() called");
 #ifdef BUTTON_PIN
 #ifdef ARCH_ESP32
 
@@ -416,6 +416,12 @@ void InputBroker::Init()
     }
 #endif // BUTTON_PIN
 #endif // HAS_BUTTON
+    if (HAS_PHYSICAL_KEYBOARD) {
+        cardKbI2cImpl = new CardKbI2cImpl();
+        cardKbI2cImpl->init();
+    }
+    if (HAS_PHYSICAL_KEYBOARD) {
+    }
 
 #if (HAS_BUTTON || ARCH_PORTDUINO) && !MESHTASTIC_EXCLUDE_INPUTBROKER
     if (config.display.displaymode != meshtastic_Config_DisplayConfig_DisplayMode_COLOR) {
@@ -446,8 +452,6 @@ void InputBroker::Init()
             rotaryEncoderInterruptImpl1 = nullptr;
         }
 #endif
-        cardKbI2cImpl = new CardKbI2cImpl();
-        cardKbI2cImpl->init();
 #if defined(M5STACK_UNITC6L)
         i2cButton = new i2cButtonThread("i2cButtonThread");
 #endif

@@ -88,16 +88,12 @@ class BluetoothStatus : public Status
                 break;
             case ConnectionState::CONNECTED:
                 LOG_DEBUG("BluetoothStatus CONNECTED");
-#ifdef BLE_LED
-                digitalWrite(BLE_LED, LED_STATE_ON);
-#endif
+                // BLE_LED is driven by StatusLEDModule::runOnce() heartbeat
                 break;
 
             case ConnectionState::DISCONNECTED:
                 LOG_DEBUG("BluetoothStatus DISCONNECTED");
-#ifdef BLE_LED
-                digitalWrite(BLE_LED, LED_STATE_OFF);
-#endif
+                // BLE_LED is driven by StatusLEDModule::runOnce() heartbeat
                 break;
             }
         }

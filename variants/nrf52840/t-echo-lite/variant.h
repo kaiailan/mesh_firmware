@@ -131,18 +131,25 @@ static const uint8_t A0 = PIN_A0;
 #define PIN_SPI1_SCK PIN_EINK_SCLK
 
 // GPS pins
-// #define GPS_DEBUG 1
+// #define GPS_DEBUG 1  // uncomment for verbose NMEA + probe logging
 #define GPS_L76K
 #define GPS_BAUDRATE 9600
+#define GPS_BAUDRATE_FIXED 1
+// L76K cross-check now handled in GPS.cpp step 6 (UBX fallback).
+// No variant-level override needed.
 #define HAS_GPS 1
+#define HAS_PHYSICAL_KEYBOARD 1
+#define OLED_COMPACT_UI // No header/nav bar - centered icon+title splash, full-screen content
+#define HAS_BUTTON 1
 // #define PIN_GPS_REINIT (32 + 5) // An output to reset L76K GPS. As per datasheet, low for > 100ms will reset the L76K
 
-#define PIN_GPS_EN (32 + 11) // GPS power
+#define PIN_GPS_EN (32 + 11) // GPS power (RT9080 LDO)
 #define GPS_EN_ACTIVE 1
-#define PIN_GPS_STANDBY (32 + 13) // wakeup pin
+#define PIN_GPS_STANDBY (32 + 13) // wakeup pin (HIGH = awake, per LilyGO example)
+#define GPS_STANDBY_ACTIVE LOW    // LOW = standby (default), HIGH = awake
 #define PIN_GPS_PPS (32 + 15)
-#define GPS_TX_PIN (32 + 10) // L76K module RX PIN
-#define GPS_RX_PIN (0 + 29)  // L76K module TX PIN
+#define GPS_TX_PIN (0 + 29)       // P0.29 = L76K TX -> MCU RX
+#define GPS_RX_PIN (32 + 10)      // P1.10 = L76K RX <- MCU TX
 
 #define GPS_THREAD_INTERVAL 50
 

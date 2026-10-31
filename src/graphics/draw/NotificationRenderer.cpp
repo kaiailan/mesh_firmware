@@ -249,6 +249,7 @@ static uint16_t splitBannerMessageLines(const char *lineStarts[MAX_LINES + 1])
 
 void NotificationRenderer::drawBannercallback(OLEDDisplay *display, OLEDDisplayUiState *state)
 {
+    // LOG_INFO("[Banner] drawBannercallback called, inEvent.inputEvent=%d", inEvent.inputEvent);
     // Handle text_input notifications first - they have their own timeout/banner logic
     if (current_notification_type == notificationTypeEnum::text_input) {
         // Check for timeout and reset if needed for text input
@@ -562,7 +563,7 @@ void NotificationRenderer::drawAlertBannerOverlay(OLEDDisplay *display, OLEDDisp
         } else if (inEvent.inputEvent == INPUT_BROKER_DOWN || inEvent.inputEvent == INPUT_BROKER_RIGHT ||
                    inEvent.inputEvent == INPUT_BROKER_USER_PRESS || inEvent.inputEvent == INPUT_BROKER_DOWN_LONG) {
             curSelected++;
-        } else if (inEvent.inputEvent == INPUT_BROKER_SELECT) {
+        } else if (inEvent.inputEvent == INPUT_BROKER_SELECT || inEvent.inputEvent == INPUT_BROKER_ANYKEY) {
             if (optionsEnumPtr != nullptr) {
                 alertBannerCallback(optionsEnumPtr[curSelected]);
                 optionsEnumPtr = nullptr;
