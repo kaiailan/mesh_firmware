@@ -26,6 +26,10 @@
 #include "mesh/generated/meshtastic/rtttl.pb.h"
 #include <Arduino.h>
 
+#if defined(T_ECHO_LITE)
+#include "input/TEchoLiteKeyboard.h"
+#endif
+
 #if HAS_LIBNOTIFY
 #include "meshUtils.h"
 #include <libnotify/notify.h>
@@ -521,6 +525,28 @@ void ExternalNotificationModule::triggerVibraOutput()
     drv.setWaveform(6, 16);
     drv.setWaveform(7, 0);
     drv.go();
+#endif
+#if defined(T_ECHO_LITE)
+    // AW86224 vibration + backlight flash for T-Echo Lite KeyShield (notification mode: VIB/LIGHT/VIB+LIGHT)
+    TEchoLiteKeyboard *kb = TEchoLiteKeyboard::getInstance();
+    if (kb) {
+        bool doVib = kb->isNotificationVibrationEnabled();
+        bool doLight = kb->isNotificationLightEnabled();
+        
+        if (doVib && doLight) {
+            // VIB + LIGHT: both at same time
+            kb->vibrateNotification(30);  // First pulse
+            kb->flashBacklightNotification();  // Flash in parallel
+        } else if (doVib) {
+            // VIB ONLY: double pulse
+            kb->vibrateNotification(30);  // First pulse
+            delay(50);           // Gap
+            kb->vibrateNotification(30);  // Second pulse
+        } else if (doLight) {
+            // LIGHT ONLY: flash backlight
+            kb->flashBacklightNotification();
+        }
+    }
 #endif
     setExternalState(1, true);
 }
