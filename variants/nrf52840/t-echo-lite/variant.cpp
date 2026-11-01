@@ -19,6 +19,7 @@
 */
 
 #include "variant.h"
+#include "Arduino.h"
 #include "nrf.h"
 #include "wiring_constants.h"
 #include "wiring_digital.h"
@@ -29,6 +30,21 @@ const uint32_t g_ADigitalPinMap[] = {
 
     // P1
     32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47};
+
+// Runs before Meshtastic touches PIN_POWER_EN. Use the same sequence as t-echo-card:
+// 3.3V rail (RT9080_EN) must be toggled HIGH -> LOW -> HIGH with 100ms dwell so the
+// LDO enters enable from a known state. Without this, the AW86224 vibration motor
+// may not get proper power and won't vibrate.
+void earlyInitVariant()
+{
+    pinMode(PIN_POWER_EN, OUTPUT);
+    digitalWrite(PIN_POWER_EN, HIGH);
+    delay(100);
+    digitalWrite(PIN_POWER_EN, LOW);
+    delay(100);
+    digitalWrite(PIN_POWER_EN, HIGH);
+    delay(100);
+}
 
 void initVariant()
 {
@@ -42,7 +58,7 @@ void initVariant()
     pinMode(PIN_LED3, OUTPUT);
     ledOff(PIN_LED3);
 
-    // 3V3 rail (PIN_POWER_EN) is already powered on by main.cpp setup().
+    // 3V3 rail (PIN_POWER_EN) is already powered on by earlyInitVariant().
     // GPS-specific LDO (PIN_GPS_EN) is handled by GPS::createGps().
     // STANDBY pin: L76K defaults to awake on power-up, so no need to
     // pre-toggle it here (matches 2.6.13 behavior which works).

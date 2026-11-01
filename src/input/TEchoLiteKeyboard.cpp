@@ -550,18 +550,21 @@ void TEchoLiteKeyboard::initAW21009()
 
     const uint8_t AW21009_ADDR = 0x20;
 
-    // Enable RT9080_EN pin (3.3V power for AW21009)
+    // Enable RT9080_EN pin (3.3V power for AW21009 and AW86224)
+    // Use LilyGO's KeyShield power-on sequence: HIGH -> 100ms -> LOW -> 100ms -> HIGH -> 1000ms
     #ifndef RT9080_EN
     #define RT9080_EN 31
     #endif
 
     pinMode(RT9080_EN, OUTPUT);
 
-    // Power cycle sequence for AW21009 (must be ≥2ms after power-up before I2C)
-    digitalWrite(RT9080_EN, LOW);
-    delay(10);
+    // Power cycle sequence for KeyShield (AW21009 + AW86224)
     digitalWrite(RT9080_EN, HIGH);
-    delay(50);  // datasheet: 2ms min, 50ms for safety
+    delay(100);
+    digitalWrite(RT9080_EN, LOW);
+    delay(100);
+    digitalWrite(RT9080_EN, HIGH);
+    delay(1000);  // Wait for 3.3V rail to stabilize
 
     // 1. Verify chip presence by reading chip ID (register 0x00)
     Wire.beginTransmission(AW21009_ADDR);

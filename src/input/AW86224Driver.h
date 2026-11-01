@@ -42,6 +42,7 @@ private:
     static constexpr uint8_t REG_RAMADDRH  = 0x40; // RAM write address high
     static constexpr uint8_t REG_RAMADDRL  = 0x41; // RAM write address low
     static constexpr uint8_t REG_RAMDATA   = 0x42; // RAM write data
+    static constexpr uint8_t REG_SYSCTRL0  = 0x04; // system control 0 (STANDBY bit 0)
     static constexpr uint8_t REG_SYSCTRL1  = 0x43; // system control 1 (EN_RAMINIT bit)
 
     bool present = false;
